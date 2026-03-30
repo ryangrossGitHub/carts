@@ -15,6 +15,7 @@ function _init()
 
  eagle:init()
  falcon:init()
+ warthog:init()
 end
 
 function _update60()
@@ -27,10 +28,16 @@ function _draw()
 
  -- Ensure active player is on top
  if player == 0 then
+  draw(warthog)
   draw(falcon)
   draw(eagle)
+ elseif player == 1 then
+  draw(warthog)
+  draw(eagle)
+  draw(falcon)
  else
   draw(eagle)
   draw(falcon)
+  draw(warthog)
  end
 end

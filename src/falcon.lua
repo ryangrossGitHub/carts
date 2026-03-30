@@ -7,7 +7,7 @@ falcon = {
  w = 1, -- width in sprites
  h = 1, -- height in sprites
  x_dir = 0, -- x direction, -1 for left, 1 for right, 0 for none
- x_speed = 4, -- speed of movement in x direction
+ x_speed = 3, -- speed of movement in x direction
 
  -- Constructor
  init=function (self)

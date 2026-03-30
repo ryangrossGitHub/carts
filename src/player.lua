@@ -1,4 +1,4 @@
-player = 0 -- 0 for eagle, 1 for falcon
+player = 0 -- 0 for eagle, 1 for falcon, 2 for warthog
 
 function draw(obj)
  if obj.x_dir == 0 then
