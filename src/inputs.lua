@@ -1,30 +1,16 @@
 function inputs()
  if btn(0) then
-  if player == 0 then
-   left(eagle)
-  elseif player == 1 then
-   left(falcon)
-  else
-   left(warthog)
-  end
+  left(current_player())
  elseif btn(1) then
-  if player == 0 then
-   right(eagle)
-  elseif player == 1 then
-   right(falcon)
-  else
-   right(warthog)
-  end
+  right(current_player())
  else
-  eagle.x_dir = 0
-  falcon.x_dir = 0
+  current_player().x_dir = 0
  end
 
  if btnp(4) then
-  if player == 0 then
-   player = 1
-  elseif player == 1 then
-   player = 2
+  -- # is the length operator in lua
+  if player < 3 then
+   player += 1
   else
    player = 0
   end

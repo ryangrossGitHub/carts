@@ -1,5 +1,17 @@
 player = 0 -- 0 for eagle, 1 for falcon, 2 for warthog
 
+function current_player()
+ if player == 0 then
+  return eagle
+ elseif player == 1 then
+  return falcon
+ elseif player == 2 then
+  return warthog
+ elseif player == 3 then
+  return hornet
+ end
+end
+
 function draw(obj)
  if obj.x_dir == 0 then
   spr(obj.s,obj.x,obj.y,obj.w,obj.h)

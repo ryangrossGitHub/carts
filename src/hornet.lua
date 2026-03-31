@@ -1,7 +1,7 @@
-warthog = {
- s = 34, -- Sprite number
- sl = 34, -- sprite number when banking left
- sr = 34, -- sprite number when banking right
+hornet = {
+ s = 6, -- Sprite number
+ sl = 40, -- sprite number when banking left
+ sr = 8, -- sprite number when banking right
  x = 0, -- x position
  y = 0, -- Y position
  w = 2, -- width in sprites
