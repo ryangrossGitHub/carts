@@ -26,9 +26,5 @@ end
 function _draw()
  cls()
  map(0,0,0,0,screen.w,screen.h)
-
- draw(warthog)
- draw(falcon)
  draw(eagle)
- draw(hornet)
 end
