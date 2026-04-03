@@ -1,30 +1,28 @@
-screen = {
- w = 128,
- h = 128,
-}
-
-sprite = {
- w = 8,
- h = 8,
-}
+screen = { w = 128, h = 128 }
+sprite = { w = 8, h = 8 }
 
 function _init()
  -- make purple the transparent color
  palt(13, true)
  palt(0, false)
-
- eagle:init()
- falcon:init()
- warthog:init()
- hornet:init()
 end
 
 function _update60()
- inputs()
+	inputs()
+	update_player_animation_frame()
 end
 
 function _draw()
- cls()
+	-- Order from bottom to top layer (z axis)
+ draw_map()
+ draw_particles(apache.bullets)
+ draw_particles(apache.missiles)
+ draw_player(apache)
+
+ sfx(sounds.helicopter_blades)
+end
+
+function draw_map()
+	cls()
  map(0,0,0,0,screen.w,screen.h)
- draw(eagle)
 end

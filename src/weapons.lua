@@ -1,23 +1,16 @@
 missiles = {
-	s = 10,
+	s = 4,
 	w = 1,
 	h = 1,
 	speed = 3,
 	damage = 5,
-	timeout = 25 -- frames
-}
-
-small_missiles = {
-	color = -7,
-	h = 2,
-	speed = 3,
-	damage = 1,
-	timeout = 10,
+	timeout = 30 -- frames
 }
 
 bullets = {
 	color = 7,
+	w = 0,
 	h = 1,
-	speed = 3,
+	speed = 5,
 	damage = 1
 }

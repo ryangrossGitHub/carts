@@ -14,8 +14,22 @@ function particle(s, ph, x, y, y_speed, color, life)
 	return p
 end
 
-function draw_particles(player)
-	for p in all(player.particles) do
+function gen_p_from_weapon(w, obj)
+	obj_spr_width_to_center = (obj.w * sprite.w)/2 -- 8 for a 16x16 sprite
+
+	if w.s == nil then -- not sprite-based
+	 weap_spr_width_to_center = 1
+ else
+	 weap_spr_width_to_center = (w.w * sprite.w)/2 -- 4 for a 8x8 sprite
+	end
+
+	part_x = (obj.x + obj_spr_width_to_center - weap_spr_width_to_center)
+ return particle(w.s, w.h, part_x, (screen.h - obj.h * sprite.h),
+					-w.speed, w.color, screen.h/w.speed)
+end
+
+function draw_particles(particles)
+	for p in all(particles) do
 		p.y += p.y_speed
 		p.life -= 1
 
@@ -30,7 +44,7 @@ function draw_particles(player)
 				end
 			end
 		else
-	  del(player.particles, p)
+	  del(particles, p)
 		end
 	end
 end
