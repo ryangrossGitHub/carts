@@ -8,9 +8,9 @@ missiles = {
 }
 
 bullets = {
-	color = 7,
+	color = 0,
 	w = 0,
-	h = 1,
 	speed = 5,
-	damage = 1
+	damage = 1,
+	timeout = 10
 }

@@ -10,6 +10,7 @@ end
 function _update60()
 	inputs()
 	update_player_animation_frame()
+	check_for_collisions()
 end
 
 function _draw()
@@ -17,6 +18,7 @@ function _draw()
  draw_map()
  draw_particles(apache.bullets)
  draw_particles(apache.missiles)
+ draw_particles(explosions)
  draw_player(apache)
 
  sfx(sounds.helicopter_blades)
