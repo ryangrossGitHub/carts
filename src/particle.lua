@@ -1,5 +1,5 @@
 function particle(s, x, y, x_speed, y_speed, color, life)
-	p = {
+	local p = {
   s = s,	-- sprite number
   w = 1, -- sprite width
   h = 1, -- sprite height
@@ -23,8 +23,7 @@ function gen_p_from_weapon(w, obj)
 	end
 
 	local part_x = (obj.x + obj_spr_width_to_center - weap_spr_width_to_center)
- return particle(w.s, part_x, (screen.h - obj.h * sprite.h),
-					0, -w.speed, w.color, screen.h/w.speed)
+ return particle(w.s, part_x, obj.y, 0, -w.speed, w.color, screen.h/w.speed)
 end
 
 function draw_particles(particles)
