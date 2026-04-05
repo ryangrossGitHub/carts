@@ -262,11 +262,13 @@ function coll_player_bullets()
  for p in all(player.bullets) do
   local x = part_x_adj(p.x)
   local y = part_y_adj(p.y)
+  local m_spr = mget(x, y)
   
-  if fget(mget(x, y)) > 0 then
+  
+  if fget(m_spr) > 0 then
    sfx(sounds.explosion)
    del(player.bullets, p)
-   mset(x, y, bkgrd.sand)
+   mset(x, y, get_bkgrd(m_spr))
    explosion(p.x, p.y, 50)
    break
   end
