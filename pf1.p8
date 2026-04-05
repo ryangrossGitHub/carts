@@ -3,12 +3,18 @@ version 43
 __lua__
 -- main --
 
+-- todo 
+-- 
+-- enemy fire collisions
+-- collision on upper map cols
+
 screen = { w = 128, h = 128 }
 sprite = { w = 8, h = 8 }
-mapp = { -- avoid using reserved word map
+mapp = { -- avoid reserved word map
 	x_mult = 16,
 	y_mult = 63 * sprite.h,
-	sections = 3
+	sections = 3, -- total columns
+	cur_sec = 0 -- which map column player is in
 }
 sounds = {
 	explosion = 0,
@@ -16,9 +22,10 @@ sounds = {
 	bullets = 2,
 	helicopter_blades = 3
 }
+camera_y = 0
 
 function _init()
- -- make purple the transparent color
+ -- make purple transparent
  palt(13, true)
  palt(0, false)
 end
@@ -26,14 +33,16 @@ end
 function _update60()
 	inputs()
 	player_anim(player)
+	enemy_fire()
 	coll_check()
 end
 
 function _draw()
-	-- order from bottom to top layer (z axis)
+	-- z axis ordering
  draw_map()
  draw_particles(player.bullets)
  draw_particles(player.missiles)
+ draw_particles(enemy_part)
  draw_particles(explosions)
  draw_player(player)
 
@@ -43,12 +52,19 @@ end
 function draw_map()
 	cls()
 
-	for i=0,mapp.sections-1 do
-  map(mapp.x_mult*i,0,0,-mapp.y_mult*i,
+	for i=1,mapp.sections do
+  map(mapp.x_mult * (i-1),
+   0,0,
+   -mapp.y_mult*i,
   	screen.w,screen.h)
 	end
 
- camera(0, player.y - screen.h + player.h*sprite.h)
+ camera_y = player.y - screen.h + player.h*sprite.h
+ camera(0, camera_y) 
+ 
+ -- set current map column
+ mapp.cur_sec = flr(
+  player.y/-mapp.y_mult)
 end
 
 -->8
@@ -105,8 +121,8 @@ player = {
 	w = 2,  -- sprite width
 	h = 2, -- sprite height
 	x = (screen.w/2) - sprite.w,
-	y = 63 * sprite.h - sprite.h*2,
-	y_speed = 0.3, -- y speed
+	y = -sprite.h*2,
+	y_speed = 5, -- y speed
 	bullets = {}, -- primary weapon
 	missiles = {}, -- secondary weapon
 }
@@ -147,8 +163,8 @@ end
 -->8
 -- particles --
 
-function particle(s, x, y, x_speed,
-		y_speed, color, life)
+function particle(s, x, y, 
+ x_speed, y_speed, color, life)
 	local p = {
   s = s,	-- sprite number
   w = 1, -- sprite width
@@ -168,7 +184,7 @@ function gen_p_from_weapon(w, obj)
 	local spr_w_to_cent = (obj.w * sprite.w)/2 -- 8 for a 16x16 sprite
  local weap_spr_w_to_cent = 1
 
-	if w.s then -- not sprite-based
+	if w.s then -- sprite-based
 	 weap_spr_w_to_cent = (w.w * sprite.w)/2 -- 4 for a 8x8 sprite
 	end
 
@@ -200,6 +216,7 @@ end
 
 explosions = {}
 explosion_colors = {5,6,7,8}
+sand_spr = 10
 
 function explosion(x, y, size)
 	for i=0,size do
@@ -214,40 +231,96 @@ end
 
 function coll_check()
  for p in all(player.bullets) do
-  local x = p.x/sprite.w
-  local y = p.y/sprite.h
-
+  local x = part_x_adj(p.x)
+  local y = part_y_adj(p.y)
+  
   if fget(mget(x, y)) == 1 then
    sfx(sounds.explosion)
    del(player.bullets, p)
-   mset(x, y, 10)
+   mset(x, y, sand_spr)
    explosion(p.x, p.y, 50)
    break
   end
  end
 
  for p in all(player.missiles) do
-  -- detect collision with the top most pixels
-  local m1x = p.x/sprite.w
-  local m2x = (p.x + 6)/sprite.w
-  local my = p.y/sprite.h
+  -- top most pixels detect
+  local m1x = part_x_adj(p.x)
+  local m2x = part_x_adj(p.x+6)
+  local my = part_y_adj(p.y)
 
   if fget(mget(m1x, my)) == 1 then
 	 	sfx(sounds.explosion)
 			del(player.missiles, p)
-	  mset(m1x, my, 10)
+	  mset(m1x, my, sand_spr)
 			explosion(p.x, p.y, 50)
 	  break
   elseif fget(mget(m2x, my)) == 1 then
    sfx(sounds.explosion)
    del(player.missiles, p)
-   mset(m2x, my, 10)
+   mset(m2x, my, sand_spr)
    explosion(p.x + 6, p.y, 50)
    break
   end
  end
 end
 
+function part_x_adj(x)
+ return x/sprite.w +
+   mapp.cur_sec * 16
+end
+
+function part_y_adj(y)
+  return (mapp.cur_sec+1) 
+   * 63 - -y/sprite.h
+end
+-->8
+-- enemies --
+enemies = {}
+enemy_part = {}
+enemy_fire_frames = 0
+
+function find_enemies_in_view()
+ for y=0,15 do -- row
+	 for x=0,15 do -- cell
+	  --map_spr_y = camera_y/sprite.h+y 
+			local map_spr_y = 
+			 (mapp.cur_sec+1) 
+    * 63 - -camera_y/sprite.h+y
+	  
+	  local map_spr_x = x +
+	   mapp.cur_sec * mapp.x_mult
+	  
+	  if fget(mget(
+	   map_spr_x,map_spr_y)) 
+	   == 1 then
+	   local  p_x = x*sprite.w + sprite.w/2
+	   local p_y = camera_y + y*sprite.h
+	   
+	   add_enemy_parts(p_x,p_y)
+	  end
+	 end
+	end
+end
+
+function enemy_fire()
+ if enemy_fire_frames == bullets.timeout then
+	 enemy_fire_frames = 0
+	 find_enemies_in_view()
+	else
+	 enemy_fire_frames += 1
+	end
+end
+
+function add_enemy_parts(x,y)
+ add(enemy_part, particle(
+  nil, x, y, 0, bullets.speed,
+  0, player.y - camera_y
+  )
+ )
+ 
+ sfx(sounds.bullets)
+end
 __gfx__
 0dddddd50ddddd0dddddddd00ddddddd8ddddd8dddddddddddddddddddddddddddddddddddddddddffffffffdddddddddddddddddddddddddddddddddddddddd
 d0dddd5550ddd0dddddddd5050dddddd7ddddd7dddddddddddddddddddddddddddddddddddddddddffffffffdddddddddddddddddddddddddddddddddddddddd
@@ -315,27 +388,27 @@ dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffffffffffffa1fffffffffdfdfd85fdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddd7766665ddddddddddddddddddddddddddddddddddddd75555555555555555555555555555585555555555555555555555557
-a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddd7666665ddddddddddddddddddddddddddddddddddddd75555a52555555555555555555555575555555555555555555555557
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfd75fdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddd7666665ddddddddddddddddddddddddddddd5555555555555555555555555555555555555555555555555555555555555557
-a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+a0a0a0a1a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddd7666665ddddddddddddddddddddddddddddd59555557555a55555a5555555555555555555555555555555555555555555557
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddd7666665ddddddddddddddddddddddddddddd5595555575555555555555555555555555555555555555555555555555555557
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 ddddddddddddddddddddddddddddd76760dddddddddddddddddddddddddddddd55595555755555555855555555555555555555555555555555555555555c5557
-a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefea1fefefea1fefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+a0a0a0a0a0a0a0a0a0a1a0a0a0a0a0a0fefefefefea1fefefea1fefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddd77666706677ddddddddddddddddddddddddddd5559555557555535555555555555555555555555555555555555555555555c57
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfd25fd57
 dddddddddddddddddddddd7766666667066666677ddddddddddddddddddddddd5555955555755555553525555555555555555555555555555555555555558557
-a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfd25fdfd57
+a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfd25fdfd57
 ddddddddddddddddddddd76666555dd0dd55566667dddddddddddddddddddddd555559555575555a558555555555555555555555555555555555555555355557
-a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffa1fffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfda557
+a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffa1fffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfda557
 ddddddddddddddddddddd555ddddddd0ddddddd555dddddddddddddddddddddd5555595555575555535555555555555555555555555555555555555525555557
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefea1fefefefefefefeffffffffffffffffffffffffa1fffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 ddddddddddddddddddddddddddddddd0dddddddddddddddddddddddddddddddd555555955555755555555555555555555555555555555555555555c558558557
-a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+a0a0a1a0a0a0a0a0a0a0a0a0a1a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd7555555955557555555555555555555555555555555555555555555355555257
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfda53557
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd7555555955555755555c55555555555555555555555555555555555c55555557
@@ -349,7 +422,7 @@ a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefea1fefefefefefefefefeffffffffffffffff
 0dddddddddddddddddddddddddddddd0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000000000000
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000000000000
 0dd6666666666666666666666665ddd0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000000000000
-a0a0a0a0a1a0a0a0a0a0a0a1a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffffffffffffffffffa1ff00000000000000000000000000000000
+a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffffffffffffffffffa1ff00000000000000000000000000000000
 0dd666666666666666666666666500d0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000000000000
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000000000000
 0dd666666666666666666666666500d0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000000000000
@@ -359,7 +432,7 @@ a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffa1ffff
 0dd666666666666666666666666500d0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd000000000000000000000000dddddddd
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffffffffffffa1ffffffff000000000000000000000000dddddddd
 0dd666666666666666666666666500d0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd000000000000000000000000dddddddd
-a0a0a0a0a0a0a0a1a0a0a0a0a0a0a0a0fefefefefea1fefea1fea1fefefefefeffffffffffffffa1ffffffffffffffff000000000000000000000000dddddddd
+a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefea1fefea1fea1fefefefefeffffffffffffffa1ffffffffffffffff000000000000000000000000dddddddd
 0dd666666666666666666666666500d0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd000000000000000000000000dddddddd
 a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0fefefefefefefefefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000033333333
 0dd666666666666666666666666500d0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000033333333
