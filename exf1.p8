@@ -5,9 +5,10 @@ __lua__
 
 -- todo 
 -- 
--- chain explosions
--- missiles heat seeking
--- tank(flag) health/dmg
+-- mile/level indicator
+-- map
+-- start screen
+-- splore
 
 screen = { w = 128, h = 128 }
 sprite = { w = 8, h = 8 }
@@ -290,18 +291,41 @@ function coll_player_missiles()
   local m_spr1 = mget(m1x, my)
   local m_spr2 = mget(m2x, my)
 
-  if fget(m_spr1) > 0 then
+  -- missile explosive effect
+  local m_spr3 = mget(m1x-1, my)
+  local m_spr4 = mget(m2x+1, my)
+  local m_spr5 = mget(m1x, my-1)
+  local m_spr6 = mget(m2x, my+1)
+
+  if fget(m_spr1) > 0 or
+   fget(m_spr2) > 0 or
+   fget(m_spr3) > 0 or
+   fget(m_spr4) > 0 or
+   fget(m_spr5) > 0 or
+   fget(m_spr6) > 0 then
+			
 			del(player.missiles, p)
 			
 			enemy_explosion(
     m1x,my,m_spr1,p.x,p.y)
-	  break
-  elseif fget(m_spr2) > 0 then
-   del(player.missiles, p)
-   
+    
    enemy_explosion(
     m2x,my,m_spr2,p.x+6,p.y)
-   break
+    
+   enemy_explosion(
+    m1x-1,my,m_spr3,p.x-6,p.y)
+    
+   enemy_explosion(
+    m2x+1,my,m_spr4,p.x+12,p.y)
+
+   enemy_explosion(
+    m1x,my-1,m_spr5,p.x,
+     p.y-sprite.h)
+    
+   enemy_explosion(
+    m2x,my+1,m_spr6,p.x,
+     p.y+sprite.h)
+	  break
   end
  end
 end
@@ -386,8 +410,11 @@ end
 function enemy_explosion(
  mx,my,m_spr,px,py)
  sfx(sounds.explosion)
- mset(mx, my, 
-    get_bkgrd(m_spr))
+ 
+ -- missiles explode on ground
+ if fget(mget(mx,my)) > 0 then
+  mset(mx, my, get_bkgrd(m_spr))
+ end
  
  explosion(px, py, 50)
    
@@ -566,23 +593,23 @@ ddddddddddddddddddddddddddddd76760dddddddddddddddddddddddddddddd5559555575555555
 dddddddddddddddddddddddddd77666706677ddddddddddddddddddddddddddd5559555557555535555555555555555555555555555555555555555555555c57
 04040404040404040404040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfd25fd57
 dddddddddddddddddddddd7766666667066666677ddddddddddddddddddddddd5555955555755555553525555555555555555555555555555555555555558557
-040404040404040404040404040404a1fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfd25fdfd57
+0404040404a104a1c2a1040404c204c2fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfd25fdfd57
 ddddddddddddddddddddd76666555dd0dd55566667dddddddddddddddddddddd555559555575555a558555555555555555555555555555555555555555355557
-04040404040404040404040404040404fefefefefefefefefefefefefefefefeffffffffffffc3fffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfda557
+040404c2040404c2d3040404a1040404fefefefefefefefefefefefefefefefeffffffffffffc3fffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfda557
 ddddddddddddddddddddd555ddddddd0ddddddd555dddddddddddddddddddddd5555595555575555535555555555555555555555555555555555555525555557
-04040404040404040404040404040404fefefefefefefefe14fefefefefefefeffffffffffffffffffffffffc3fffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+0404040404a1040404c20404a1040404fefefefefefefefe14fefefefefefefeffffffffffffffffffffffffc3fffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 ddddddddddddddddddddddddddddddd0dddddddddddddddddddddddddddddddd555555955555755555555555555555555555555555555555555555c558558557
-04040404a104040404a1a1a104040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+04a10404a104c204040404c204040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd7555555955557555555555555555555555555555555555555555555355555257
-0404040404a1040404a1040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfda53557
+0404d3c20404040404a10404d3a10404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfda53557
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd7555555955555755555c55555555555555555555555555555555555c55555557
-040404040404a1a1a1a1a1a1a1a10404fefefefefec1fefefefefec1fefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfd85fd57
+0404040404040404040404a104040404fefefefefec1fefefefefec1fefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfd85fd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd57555555955555755c5555555555555555555555555555555555555555558557
-0404040404a104040404040404040404fefefefefefefefe14fefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfda5fdfd57
+04040404040404040404040404040404fefefefefefefefe14fefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfda5fdfd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd55755555595555755555555555555555555555555555555555555555555a5557
-04040404a10404040404040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+04040404040404040404040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd5575555559555557555555555555555555555555555555555555555555555557
-040404a1040404040404040404040404fefefefefefe14fefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000000000000
+04040404040404040404040404040404fefefefefefe14fefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000000000000
 0dddddddddddddddddddddddddddddd0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000000000000
 04040404040404040404040404040404fefefefefefefefefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000000000000
 0dd6666666666666666666666665ddd0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000000000000
@@ -615,7 +642,7 @@ dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd5575555559555557
 04040404040404040404040404040404fefefefefefefefefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000011111111
 00000000000000000000000000000000dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000011111111
 __gff__
-000000000000000000000000000000000000000000000000000083000b000000000000000000000000000000870f00000000000000000000000000001381000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000083000b000000000000000000000000000000830b00000000000000000000000000001381000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 4040404040404040404040404040404041414141414141414141414141414141ffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
