@@ -243,6 +243,7 @@ bkgrd = {
  water = 66
 }
 neighbor_exps = {}
+neighbors_marked = {} -- prevent recursion getting stuck
 neighbor_t_mult = 5 -- exp delay
 
 function explosion(x, y, size)
@@ -250,8 +251,9 @@ function explosion(x, y, size)
 		-- to get a range, (high - low) + low
 		local x_speed = rnd(2 - -2) + -2
 		local y_speed = rnd(2 - -2) + -2
-		local p = particle(nil, x, y, x_speed,
-			y_speed, rnd(explosion_colors), 50)
+		local p = particle(nil, x, y, 
+		 x_speed, y_speed, 
+		 rnd(explosion_colors), 50)
 		add(explosions, p)
 	end
 end
@@ -307,13 +309,51 @@ end
 function coll_neighbors(
  mx,my,px,py,recurse_len)
  
- local l_spr = mget(mx-1,my)
- if fget(l_spr) > 0 then
+ -- prevent endless recursion
+ if neighbors_marked[
+  flr(mx).."|"..flr(my)] then
+  return
+ else
+	 neighbors_marked[ 
+		   flr(mx).."|"..flr(my)] = true
+	end
+		   
+	neighbor_check( -- left
+	 mx-1,my,px-sprite.w,py,
+	 recurse_len)
+
+ neighbor_check( -- right
+  mx+1,my,px+sprite.w,py,
+  recurse_len)
+ 
+ neighbor_check( -- up
+  mx,my-1,px,py,recurse_len)
+  
+ -- down not needed
+ 
+ neighbor_check( -- left up
+  mx-1,my-1,px,py,recurse_len)
+  
+ neighbor_check( -- right up
+  mx+1,my-1,px,py,recurse_len)
+  
+ neighbor_check( -- left down
+  mx-1,my+1,px,py,recurse_len)
+  
+ neighbor_check( -- right down
+  mx+1,my+1,px,py,recurse_len)
+end
+
+function neighbor_check(
+ mx,my,px,py,recurse_len)
+ 
+ local nm_spr = mget(mx,my)
+ if fget(nm_spr) > 0 then
   local nbr = {
-   nmx=mx-1,
+   nmx=mx,
    nmy=my,
-   n_spr=l_spr,
-   nx=px-sprite.w,
+   n_spr=nm_spr,
+   nx=px,
    ny=py,
    timeout=(recurse_len+1)
     * neighbor_t_mult
@@ -324,8 +364,8 @@ function coll_neighbors(
   -- recursion
   coll_neighbors(
    nbr.nmx,nbr.nmy,nbr.nx,
-   nbr.ny, recurse_len+1)
- end
+   nbr.ny, recurse_len+1) 
+	end
 end
 
 function neighbor_exp()
@@ -337,6 +377,8 @@ function neighbor_exp()
     n.nx,n.ny)
    
    del(neighbor_exps, n)
+   del(neighbors_marked,
+	   flr(n.nmx).."|"..flr(n.nmy))
   end
  end
 end
@@ -346,7 +388,8 @@ function enemy_explosion(
  sfx(sounds.explosion)
  mset(mx, my, 
     get_bkgrd(m_spr))
-   explosion(px, py, 50)
+ 
+ explosion(px, py, 50)
    
  coll_neighbors(mx,my,px,py,1)
 end
@@ -370,7 +413,7 @@ function coll_enemy_bullets()
    
    sfx(sounds.explosion)
    del(enemy_bullets, p)
-   explosion(p.x, p.y, 50)
+   explosion(p.x, p.y, 1)
    player.hit = 1
    break
   end
@@ -529,17 +572,17 @@ ddddddddddddddddddddd76666555dd0dd55566667dddddddddddddddddddddd555559555575555a
 ddddddddddddddddddddd555ddddddd0ddddddd555dddddddddddddddddddddd5555595555575555535555555555555555555555555555555555555525555557
 04040404040404040404040404040404fefefefefefefefe14fefefefefefefeffffffffffffffffffffffffc3fffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 ddddddddddddddddddddddddddddddd0dddddddddddddddddddddddddddddddd555555955555755555555555555555555555555555555555555555c558558557
-04040404040404040404040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+04040404a104040404a1a1a104040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd7555555955557555555555555555555555555555555555555555555355555257
-04040404040404040404040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfda53557
+0404040404a1040404a1040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfda53557
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd7555555955555755555c55555555555555555555555555555555555c55555557
-040404040404a1a1a1d3040404040404fefefefefec1fefefefefec1fefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfd85fd57
+040404040404a1a1a1a1a1a1a1a10404fefefefefec1fefefefefec1fefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfd85fd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd57555555955555755c5555555555555555555555555555555555555555558557
-0404040404d304040404d304d3040404fefefefefefefefe14fefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfda5fdfd57
+0404040404a104040404040404040404fefefefefefefefe14fefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfda5fdfd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd55755555595555755555555555555555555555555555555555555555555a5557
-04040404040404040404040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
+04040404a10404040404040404040404fefefefefefefefefefefefefefefefefffffffffffffffffffffffffffffffffdfdfdfdfdfdfdfdfdfdfdfdfdfdfd57
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd5575555559555557555555555555555555555555555555555555555555555557
-d3a10404040404040404040404040404fefefefefefe14fefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000000000000
+040404a1040404040404040404040404fefefefefefe14fefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000000000000
 0dddddddddddddddddddddddddddddd0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000000000000
 04040404040404040404040404040404fefefefefefefefefefefefefefefefeffffffffffffffffffffffffffffffff00000000000000000000000000000000
 0dd6666666666666666666666665ddd0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd00000000000000000000000000000000
