@@ -29,6 +29,13 @@ function _init()
 end
 
 function _update()
+ e_spawn_cnt += 1
+ 
+ if e_spawn_cnt >= e_spawn_delay then
+  spawn_enemy()
+  e_spawn_cnt = 0
+ end
+ 
  if btn(0) and p1.x > 0 then
   p1.x -= 1
   p1.f = true 
@@ -45,64 +52,10 @@ function _update()
  
  if btnp(❎) or btnp(🅾️) then
   sfx(0)
-  
-  debug="e:"..e.y..",p:"..p1.y
-  if ((e.x < p1.x and p1.f) or
-   (e.x > p1.x and not p1.f)) and 
-   (e.y > p1.y-4 and e.y < p1.y+8) 
-   then
-      
-   e.dead=1
-   e.s = 12
-   
-   for i=1,20 do
-   	local xs = rnd(3 - 0) + 0
-		  local ys = rnd(1 - -1) + -1
-    add(particles, 
-     particle(e.x+4,e.y,
-      xs,ys,3,10))
-   end 
-  end
+  enemy_coll_detect()
  end
  
- if e.dead == 1 then
-  e.d_afc += 1
-  
-  if e.d_afc >= e.d_afd then
-	  e.d_afc = 0
-	  
-	  if e.s == 12 then
-	   e.s = 14
-	  elseif e.s == 44 then
-	   e.s = 46
-	  end
-	 end
- else
-  if p1.x < e.x - e.spd then
-   e.x -= e.spd
-   e.f = false
-  elseif p1.x > e.x + e.spd then
-   e.x += e.spd
-   e.f = true
-  end
-  
-  if p1.y < e.y - e.spd then
-   e.y -= e.spd
-  elseif p1.y > e.y + e.spd then
-   e.y += e.spd
-  end
-  
-  e.afc += 1
-  
-  if e.afc >= e.afd then
-   e.afc = 0
-   if e.s == 8 then
-    e.s = 10
-   else
-    e.s = 8
-   end
-  end 
- end
+ update_enemies()
  
  if abs(p1.x - p1.lafx) 
   > p1.afd or 
@@ -136,7 +89,7 @@ end
 function _draw()
  cls()
  map(0,0)
- spr(e.s,e.x,e.y,2,2,e.f,false)
+ draw_enemies()
  draw_particles(particles)
  spr(p1.s,p1.x,p1.y,
   2,2,p1.f,false)
@@ -229,18 +182,98 @@ end
 -->8
 -- enemies --
 
-e = {
- s=8,
- spd=0.2, -- movement speed
- f=true,
- x=rnd({-20,128}),
- y=rnd(56) + 56,
- d_afd=20, -- death anim frm delay
- d_afc=0, -- death anim frm cnt
- dead=0,
- afd=10, -- anima frame delay
- afc=0,
-}
+enemies = {}
+
+e_spawn_cnt = 0
+e_spawn_delay = 30
+
+function spawn_enemy()
+ add(enemies, {
+	 s=8,
+	 spd=0.2, -- movement speed
+	 f=true,
+	 x=rnd({-20,128}),
+	 y=rnd(56) + 56,
+	 d_afd=20, -- death anim frm delay
+	 d_afc=0, -- death anim frm cnt
+	 dead=0,
+	 afd=10, -- anima frame delay
+	 afc=0,
+	})
+end
+
+function update_enemies()
+ for e in all(enemies) do
+	 if e.dead == 1 then
+	  e.d_afc += 1
+	  
+	  if e.d_afc >= e.d_afd then
+		  e.d_afc = 0
+		  
+		  if e.s == 12 then
+		   e.s = 14
+		  elseif e.s == 44 then
+		   e.s = 46
+		  end
+		 end
+	 else
+	  if p1.x < e.x - e.spd then
+	   e.x -= e.spd
+	   e.f = false
+	  elseif p1.x > e.x + e.spd then
+	   e.x += e.spd
+	   e.f = true
+	  end
+	  
+	  if p1.y < e.y - e.spd then
+	   e.y -= e.spd
+	  elseif p1.y > e.y + e.spd then
+	   e.y += e.spd
+	  end
+	  
+	  e.afc += 1
+	  
+	  if e.afc >= e.afd then
+	   e.afc = 0
+	   if e.s == 8 then
+	    e.s = 10
+	   else
+	    e.s = 8
+	   end
+	  end 
+	 end
+ end
+end
+
+function draw_enemies()
+ for e in all(enemies) do
+  spr(e.s,e.x,e.y,2,2,e.f,false)
+ end
+end
+
+function enemy_coll_detect()
+ for e in all(enemies) do
+  if e.dead == 0 and 
+   ((e.x < p1.x and p1.f) or
+   (e.x > p1.x and not p1.f)) and 
+   (e.y > p1.y-4 and e.y < p1.y+8) 
+   then
+      
+   e.dead=1
+   e.s = 12
+   
+   for i=1,20 do
+   	local xs = rnd(3 - 0) + 0
+		  local ys = rnd(1 - -1) + -1
+    add(particles, 
+     particle(e.x+4,e.y,
+      xs,ys,3,10))
+   end
+  
+   return 
+  end
+ end
+end
 __gfx__
 99900009999999999990000999999999999000099999999999900009999999999999993449999999999999344999999999999999999999999999999999999999
 99900049999999999990004999999999999000499999999999900049999999999999993349999999999999334999999999999999999999999999999999999999
