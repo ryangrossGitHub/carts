@@ -21,19 +21,6 @@ p2 = {
  afc=0, -- anima frame count
 }
 
-e = {
- s=8,
- spd=0.2, -- movement speed
- f=true,
- x=rnd({-20,128}),
- y=rnd(56) + 56,
- d_afd=20, -- death anim frm delay
- d_afc=0, -- death anim frm cnt
- dead=0,
- afd=5, -- anima frame delay
- afc=0,
-}
-
 debug = ""
 
 function _init()
@@ -57,22 +44,16 @@ function _update()
  end
  
  if btnp(❎) or btnp(🅾️) then
-   sfx(0)
+  sfx(0)
+  
+  debug="e:"..e.y..",p:"..p1.y
+  if ((e.x < p1.x and p1.f) or
+   (e.x > p1.x and not p1.f)) and 
+   (e.y > p1.y-4 and e.y < p1.y+8) 
+   then
+      
    e.dead=1
-   
-   if p1.x < e.x then
-    if e.f == false then
-     e.s = 12
-    else
-     e.s = 44
-    end
-   else
-    if e.f == false then 
-     e.s = 44
-    else
-     e.s = 12
-    end
-   end
+   e.s = 12
    
    for i=1,20 do
    	local xs = rnd(3 - 0) + 0
@@ -81,6 +62,7 @@ function _update()
      particle(e.x+4,e.y,
       xs,ys,3,10))
    end 
+  end
  end
  
  if e.dead == 1 then
@@ -96,17 +78,17 @@ function _update()
 	  end
 	 end
  else
-  if p2.x < e.x - e.spd then
+  if p1.x < e.x - e.spd then
    e.x -= e.spd
    e.f = false
-  elseif p2.x > e.x + e.spd then
+  elseif p1.x > e.x + e.spd then
    e.x += e.spd
    e.f = true
   end
   
-  if p2.y < e.y - e.spd then
+  if p1.y < e.y - e.spd then
    e.y -= e.spd
-  elseif p2.y > e.y + e.spd then
+  elseif p1.y > e.y + e.spd then
    e.y += e.spd
   end
   
@@ -244,6 +226,21 @@ function say(x,y,msg,border)
   end
 end
 
+-->8
+-- enemies --
+
+e = {
+ s=8,
+ spd=0.2, -- movement speed
+ f=true,
+ x=rnd({-20,128}),
+ y=rnd(56) + 56,
+ d_afd=20, -- death anim frm delay
+ d_afc=0, -- death anim frm cnt
+ dead=0,
+ afd=10, -- anima frame delay
+ afc=0,
+}
 __gfx__
 99900009999999999990000999999999999000099999999999900009999999999999993449999999999999344999999999999999999999999999999999999999
 99900049999999999990004999999999999000499999999999900049999999999999993349999999999999334999999999999999999999999999999999999999
