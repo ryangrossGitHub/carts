@@ -63,18 +63,8 @@ function _update()
  
  update_bot()
  update_enemies()
- 
- if abs(p.x - p.lafx) 
-  > p.afd or 
-  abs(p.y - p.lafy) 
-  > p.afd then
-
-  p.lafx = p.x
-  p.lafy = p.y
-  
-  -- get next animation frame
-  p.si=(p.si % #p.s) + 1
- end
+ update_player_anims(p)
+ update_player_anims(bot)
 end
 
 function _draw()
@@ -304,8 +294,8 @@ p2 = {
  wpn=0 -- weapon: 0 pistol, 1 shotgun
 }
 
-p=p2
-bot=p1
+p=p1
+bot=p2
 
 trigger_p = false
 
@@ -320,24 +310,32 @@ pstol = { -- pistol
 }
 
 function update_bot()
- local c = closest_enemy()
- debug=c
- if not c then
-  -- move up or down
- else
+ local c,y = closest_enemy()
+ if c then
 	 if c < 0 then
 	  bot.f = true
 	 else
 	  bot.f = false
 	 end
-	 
 	 bot_fire()
+	end
+	
+	if y < 0 then
+	 bot.y -= 1
+	elseif y > 0 then
+	 bot.y += 1
 	end
 end
 
 function closest_enemy()
+ -- which direction to fire
  local closest = 99
- local c_dir = 0
+ -- neg = left, pos = right
+ local c_xdir = 0
+ 
+ -- which direction to move
+ -- neg = up, pos = down
+ local e_ydir = 0
  
  local hbox = 4 -- hit box
  
@@ -346,25 +344,37 @@ function closest_enemy()
  end
  
  for e in all(enemies) do
-  if e.dead == 0 and  
-   (e.y > bot.y-hbox 
-   and e.y < bot.y+hbox) 
-   then
+  if e.dead == 0 then
+   -- if left or right then
+   -- fire at closest enemy
+   -- otherwise calculate
+   -- whether there are more
+   -- enemies above or below
+   -- to dictate y movement
+   
+   if (e.y > bot.y-hbox 
+    and e.y < bot.y+hbox) 
+    then
       
-   local dir = e.x-bot.x
-   local dif = abs(dir)
-   if dif < closest then
-    closest = dif
-    c_dir = dir
+	   local dir = e.x-bot.x
+	   local dif = abs(dir)
+	   if dif < closest then
+	    closest = dif
+	    c_xdir = dir
+	   end
+	  elseif e.y < bot.y then
+	   e_ydir -= 1
+	  else
+	   e_ydir += 1
    end
   end
  end
  
  if closest == 99 then
   -- no enemies in range
-  return nil
+  return nil, e_ydir
  else
-  return c_dir
+  return c_xdir, e_ydir
  end
 end
 
@@ -381,6 +391,20 @@ function bot_fire()
    sfx(1)
    enemy_coll_detect(bot)
   end
+ end
+end
+
+function update_player_anims(p)
+ if abs(p.x - p.lafx) 
+  > p.afd or 
+  abs(p.y - p.lafy) 
+  > p.afd then
+
+  p.lafx = p.x
+  p.lafy = p.y
+  
+  -- get next animation frame
+  p.si=(p.si % #p.s) + 1
  end
 end
 __gfx__
