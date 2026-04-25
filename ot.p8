@@ -314,8 +314,10 @@ function update_bot()
  if c then
 	 if c < 0 then
 	  bot.f = true
+	  bot.x -= 1
 	 else
 	  bot.f = false
+	  bot.x += 1
 	 end
 	 bot_fire()
 	end
