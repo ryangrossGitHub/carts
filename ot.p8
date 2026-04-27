@@ -15,16 +15,34 @@ function _update()
 
  if stage == 0 then
   update_start()
- end
-
- e_spawn_cnt += 1
- 
- if e_spawn and 
-  e_spawn_cnt >= e_spawn_delay 
-  then
-  
-  spawn_enemy(e_speed)
-  e_spawn_cnt = 0
+ else
+  if stages[stage].e_cnt >
+	  e_spawn_s_cnt then
+		 
+		 e_spawn_d_cnt += 1
+		 
+		 if e_spawn and
+		  e_spawn_d_cnt >= e_spawn_delay 
+		  then
+		  
+		  spawn_enemy(stages[stage].e_spd)
+		  e_spawn_d_cnt = 0
+		  e_spawn_s_cnt += 1
+		 end
+	 else
+	  local all_dead = true
+		 for e in all(enemies) do
+		 	if e.dead == 0 then
+		 	 all_dead = false
+		 	 break
+		 	end
+		 end
+		 	
+	  if all_dead then
+	   enemies = {} -- clear
+		  load_stage(stage+1)
+		 end
+	 end
  end
  
  if p_move then
@@ -212,8 +230,9 @@ enemies = {}
 
 e_spawn = false
 e_speed = 0.5
-e_spawn_cnt = 0
-e_spawn_delay = 15
+e_spawn_s_cnt = 0 -- stage cnt
+e_spawn_d_cnt = 0 
+e_spawn_delay = 15 -- delay
 
 function spawn_enemy(speed)
  add(enemies, {
@@ -485,12 +504,16 @@ stages = {
  {
   sfx=10,
   cam_x=0,
-  cam_y=0
+  cam_y=0,
+  e_cnt=10,
+  e_spd=0.3
  },
  {
   sfx=10,
   cam_x=screen_s*1,
-  cam_y=0
+  cam_y=0,
+  e_cnt=20,
+  e_spd=0.9
  },
  {
   sfx=10,
@@ -570,8 +593,11 @@ function load_stage(n)
  if n == 0 then
   load_start()
  else
+  e_spawn_s_cnt = 0
   e_spawn = true
   p_move = true
+  sfx(stages[n].sfx)
+  
   if n < 9 then
    p1.y = init_p_y
    p2.y = init_p_y
@@ -583,7 +609,6 @@ function load_stage(n)
    p1.x = screen_s*(n-9)+init_p1_x
    p2.x = screen_s*(n-9)+init_p2_x
   end
-  sfx(stages[n].sfx)
  end
 end
 
@@ -605,7 +630,7 @@ function update_start()
  end
  
  if btnp(4) or btnp(5) then
-  load_stage(9)
+  load_stage(1)
  end
 end
 
