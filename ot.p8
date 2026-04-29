@@ -30,7 +30,7 @@ function _update()
 		 e_spawn_d_cnt += 1
 		 
 		 if e_spawn and
-		  e_spawn_d_cnt >= e_spawn_delay 
+		  e_spawn_d_cnt >= stages[stage].e_spwd 
 		  then
 		  
 		  spawn_enemy(stages[stage].e_spd)
@@ -237,7 +237,6 @@ e_spawn = false
 e_speed = 0.5
 e_spawn_s_cnt = 0 -- stage cnt
 e_spawn_d_cnt = 0 
-e_spawn_delay = 15 -- delay
 
 function spawn_enemy(speed)
  e = {
@@ -546,81 +545,96 @@ cam_y = 0
 stages = {
  {
   sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=10,
+  e_cnt=20,
   e_spd=0.3,
+  e_spwd=15
+ },
+ {
+  sfx=10,
+  e_cnt=30,
+  e_spd=0.3,
+  e_spwd=15
+ },
+ {
+  sfx=10,
+  e_cnt=40,
+  e_spd=0.3,
+  e_spwd=14,
   e_wsr={{5,10}} --wall spawn range
  },
  {
   sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=2,
-  e_spd=0.3
- },
- {
-  sfx=10,
-  e_cnt=10,
+  e_cnt=50,
   e_spd=0.3,
+  e_spwd=14
+ },
+ {
+  sfx=10,
+  e_cnt=60,
+  e_spd=0.3,
+  e_spwd=13
+ },
+ {
+  sfx=10,
+  e_cnt=70,
+  e_spd=0.4,
+  e_spwd=13
+ },
+ {
+  sfx=10,
+  e_cnt=80,
+  e_spd=0.4,
+  e_spwd=12
+ },
+ {
+  sfx=10,
+  e_cnt=90,
+  e_spd=0.4,
+  e_spwd=12
+ },
+ {
+  sfx=10,
+  e_cnt=100,
+  e_spd=0.4,
+  e_spwd=11
+ },
+ {
+  sfx=10,
+  e_cnt=110,
+  e_spd=0.4,
+  e_spwd=11
+ },
+ {
+  sfx=10,
+  e_cnt=120,
+  e_spd=0.5,
+  e_spwd=10
+ },
+ {
+  sfx=10,
+  e_cnt=130,
+  e_spd=0.5,
+  e_spwd=9
+ },
+ {
+  sfx=10,
+  e_cnt=140,
+  e_spd=0.5,
+  e_spwd=8,
   e_wsr={{11,12}} --wall spawn range
  },
  {
   sfx=10,
-  e_cnt=10,
-  e_spd=0.3,
+  e_cnt=150,
+  e_spd=0.5,
+  e_spwd=7,
   e_wsr={{1,5},{10,14}} --wall spawn range
  },
  {
   sfx=10,
-  e_cnt=10,
-  e_spd=0.3,
+  e_cnt=160,
+  e_spd=0.6,
+  e_spwd=6,
   e_wsr={{0,1},{13,14}} --wall spawn range
  },
  {
@@ -698,7 +712,7 @@ function update_start()
  end
  
  if btnp(4) or btnp(5) then
-  load_stage(1)
+  load_stage(9)
  end
 end
 
