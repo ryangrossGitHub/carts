@@ -146,6 +146,9 @@ function _draw()
   end
  end
 
+ if stage_trans then
+  draw_trans_dialog() 
+ end
 
  --say(p.x,p.y, debug, 1)
 end
@@ -216,11 +219,11 @@ end_dt = {
  {"p2", "IN RETURN YOU HELP US STOP THE OTHERS"},
  {"e", "DEAL, BUT I WANT TO SEE MY WIFE AND DAUGHTER"},
  {"p1", "OKAY, COME WITH US, LET'S TAKE THESE GUYS DOWN"},
- {"f", "TO BE CONTINUED..."},
- {"f", "TO BE CONTINUED..."},
- {"f", "TO BE CONTINUED..."},
- {"f", "TO BE CONTINUED..."},
- {"f", "TO BE CONTINUED..."},
+ {"f", "TO BE CONTINUED.."},
+ {"f", "TO BE CONTINUED.."},
+ {"f", "TO BE CONTINUED.."},
+ {"f", "TO BE CONTINUED.."},
+ {"f", "TO BE CONTINUED.."},
 }
 
 function say(x,y,msg,border,wide)
@@ -308,6 +311,20 @@ function ending_dialog()
 	else
 	 draw_boss(false)
 	end
+end
+
+function draw_trans_dialog()
+ if stage == 2 then --DONUT
+  say(p2.x,p2.y, "DARN, OUT OF DONUTS. MUST BE THE MORNING RUSH", 1)
+ elseif stage == 3 then --COFFEE
+  say(p1.x,p1.y, "THE VIRUS SPREADS THROUGH WATER, THAT'S WHY I ONLY DRINK COFFEE", 1)
+ elseif stage == 4 then --PARKING
+  say(p2.x,p2.y, "I'M GETTING TO OLD FOR THIS", 1)
+ elseif stage == 5 then --ICE CREAM TRUCK
+  say(p1.x,p1.y, "I'M DEFINATELY GENERATING THIS REPORT WITH AI", 1)
+ elseif stage == 6 then --PARK
+  say(p2.x,p2.y, "IF WE CAN FIND THE SOURCE OF THE VIRUS HERE WE CAN STOP THIS", 1)
+ end
 end
 -->8
 -- enemies --
@@ -807,7 +824,7 @@ function update_start()
  end
  
  if btnp(4) or btnp(5) then
-  load_stage(9)
+  load_stage(1)
  end
 end
 
