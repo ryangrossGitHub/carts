@@ -317,13 +317,29 @@ function draw_trans_dialog()
  if stage == 2 then --DONUT
   say(p2.x,p2.y, "DARN, OUT OF DONUTS. MUST BE THE MORNING RUSH", 1)
  elseif stage == 3 then --COFFEE
-  say(p1.x,p1.y, "THE VIRUS SPREADS THROUGH WATER, THAT'S WHY I ONLY DRINK COFFEE", 1)
+  say(p1.x,p1.y, "THE VIRUS SPREADS THROUGH WATER, GOOD THING I ONLY DRINK COFFEE", 1)
  elseif stage == 4 then --PARKING
   say(p2.x,p2.y, "I'M GETTING TO OLD FOR THIS", 1)
  elseif stage == 5 then --ICE CREAM TRUCK
-  say(p1.x,p1.y, "I'M DEFINATELY GENERATING THIS REPORT WITH AI", 1)
+  say(p1.x,p1.y, "I'M DEFINATELY GENERATING MY REPORT WITH AI WHEN WE GET BACK", 1)
  elseif stage == 6 then --PARK
   say(p2.x,p2.y, "IF WE CAN FIND THE SOURCE OF THE VIRUS HERE WE CAN STOP THIS", 1)
+ elseif stage == 7 then --SIGN
+  say(p1.x,p1.y, "THAT'S 100, NOT THAT I'M KEEPING SCORE OR ANYTHING", 1)
+ elseif stage == 8 then --FENCE
+  say(p2.x,p2.y, "WE MADE IT, LET'S GET INSIDE AND TURN OFF THE WATER", 1)
+ elseif stage == 10 then --PLANT ENTRANCE
+  say(p1.x,p1.y, "C'MON CHAD, KEEP UP", 1)
+ elseif stage == 11 then --PIPE1
+  say(p2.x,p2.y, "WHEN WE'RE DONE HERE, FIRST ROUND IS ON ME", 1)
+ elseif stage == 12 then --PIPE2
+  say(p1.x,p1.y, "WHAT'S MORE IMPRESSIVE, TURNING WATER INTO WINE, OR PEE INTO WATER", 1)
+ elseif stage == 13 then --VAT1
+  say(p2.x,p2.y, "HOW BIG IS THIS BUILDING?", 1)
+ elseif stage == 14 then --VAT2
+  say(p1.x,p1.y, "GREAT, MORE WALL OPENINGS", 1)
+ elseif stage == 15 then --VAT2
+  say(p2.x,p2.y, "WHATEVER HAPPENS JENN, I COULDN'T ASK FOR A BETTER PARTNER", 1)
  end
 end
 -->8
@@ -653,94 +669,94 @@ cam_y = 0
 stages = {
  {
   sfx=10,
-  e_cnt=20,
+  e_cnt=2,
   e_spd=0.3,
   e_spwd=15
  },
  {
   sfx=10,
-  e_cnt=30,
+  e_cnt=3,
   e_spd=0.3,
   e_spwd=15
  },
  {
   sfx=10,
-  e_cnt=40,
+  e_cnt=4,
   e_spd=0.3,
   e_spwd=14,
   e_wsr={{5,10}} --wall spawn range
  },
  {
   sfx=10,
-  e_cnt=50,
+  e_cnt=5,
   e_spd=0.3,
   e_spwd=14
  },
  {
   sfx=10,
-  e_cnt=60,
+  e_cnt=6,
   e_spd=0.3,
   e_spwd=13
  },
  {
   sfx=10,
-  e_cnt=70,
+  e_cnt=7,
   e_spd=0.4,
   e_spwd=13
  },
  {
   sfx=10,
-  e_cnt=80,
+  e_cnt=8,
   e_spd=0.4,
   e_spwd=12
  },
  {
   sfx=10,
-  e_cnt=0,
+  e_cnt=9,
   e_spd=0.4,
   e_spwd=12
  },
  {
   sfx=10,
-  e_cnt=0,
+  e_cnt=10,
   e_spd=0.4,
   e_spwd=11
  },
  {
   sfx=10,
-  e_cnt=0,
+  e_cnt=11,
   e_spd=0.4,
   e_spwd=11
  },
  {
   sfx=10,
-  e_cnt=0,
+  e_cnt=12,
   e_spd=0.5,
   e_spwd=10
  },
  {
   sfx=10,
-  e_cnt=0,
+  e_cnt=13,
   e_spd=0.5,
   e_spwd=9
  },
  {
   sfx=10,
-  e_cnt=0,
+  e_cnt=14,
   e_spd=0.5,
   e_spwd=8,
   e_wsr={{11,12}} --wall spawn range
  },
  {
   sfx=10,
-  e_cnt=0,
+  e_cnt=15,
   e_spd=0.5,
   e_spwd=7,
   e_wsr={{1,5},{10,14}} --wall spawn range
  },
  {
   sfx=10,
-  e_cnt=0,
+  e_cnt=16,
   e_spd=0.6,
   e_spwd=6,
   e_wsr={{0,1},{13,14}} --wall spawn range
