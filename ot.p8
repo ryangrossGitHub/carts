@@ -180,12 +180,12 @@ end
 -->8
 -- dialog --
 
-end_dialog_delay = 150
+end_dialog_delay = 100
 end_dialog_cnt = 0
 end_dt_cnt = 1
 end_dt = {
 	{"p2", "HEY! PUT'EM UP"},
- {"e", "I'M SORRY. MY WIFE AND DAUGHTER WERE TAKEN"},	
+ {"e", "I'M SORRY, MY WIFE AND DAUGHTER WERE TAKEN"},	
  {"e", "I HAD NO WAY TO PAY THEIR RANSOM"},
  {"e", "I.. I HAVE TO DO THIS TO BUY THEIR FREEDOM"},
  {"p2", "I HAVE A WIFE AND DAUGHTER TOO"},
@@ -304,7 +304,7 @@ function draw_trans_dialog()
  elseif stage == 4 then --PARKING
   say(p2.x,p2.y, "I DON'T GET PAID ENOUGH FOR THIS", 1)
  elseif stage == 5 then --ICE CREAM TRUCK
-  say(p1.x,p1.y, "I'M DEFINATELY GENERATING MY REPORT WITH AI WHEN WE GET BACK", 1)
+  say(p1.x,p1.y, "IF THEY HAD MINT CHOCOLATE CHIP I WOULD HAVE BOUGHT ONE", 1)
  elseif stage == 6 then --PARK
   say(p2.x,p2.y, "IF WE CAN FIND THE SOURCE OF THE VIRUS HERE WE CAN STOP THIS", 1)
  elseif stage == 7 then --SIGN
@@ -312,13 +312,13 @@ function draw_trans_dialog()
  elseif stage == 8 then --FENCE
   say(p2.x,p2.y, "WE MADE IT, LET'S GET INSIDE AND TURN OFF THE WATER", 1)
  elseif stage == 10 then --PLANT ENTRANCE
-  say(p1.x,p1.y, "WORST PART ABOUT THE APOCOLYPSE, NO FOOD, NO DONUTS, NO PIZZA", 1)
+  say(p1.x,p1.y, "WORST PART ABOUT THE APOCOLYPSE, NO WINE, NO PIZZA, NO DONUTS", 1)
  elseif stage == 11 then --PIPE1
   say(p2.x,p2.y, "AFTER THIS, FIRST ROUND IS ON ME, IF WE CAN FIND AN OPEN BAR..", 1)
  elseif stage == 12 then --PIPE2
-  say(p1.x,p1.y, "WHAT'S MORE IMPRESSIVE, TURNING WATER INTO WINE, OR PEE INTO WATER", 1)
+  say(p1.x,p1.y, "I'M DEFINATELY GETTING MY STEPS IN", 1)
  elseif stage == 13 then --VAT1
-  say(p2.x,p2.y, "I NEED TO MOVE MY FAMILY OUT TO THE COUNTRY", 1)
+  say(p2.x,p2.y, "I NEED TO MOVE MY FAMILY OUT TO THE COUNTRY SIDE", 1)
  elseif stage == 14 then --VAT2
   say(p1.x,p1.y, "IF YOU ALL LEAVE THE CITY, JAKE AND I ARE COMING WITH YOU", 1)
  elseif stage == 15 then --VAT2
@@ -358,9 +358,9 @@ function spawn_enemy(speed)
 	end
 	
 	-- if wall spawn support
-	-- 40% chance of wall spawn
+	-- 25% chance of wall spawn
 	if stages[stage].e_wsr and
-		rnd() < 0.40 then
+		rnd() < 0.25 then
 	 
 	 -- which wall opening
 	 -- opening is a spawn range
@@ -655,86 +655,86 @@ cam_x = 0
 cam_y = 0
 
 stages = {
- {
+ { -- DONUTS
   e_cnt=50,
   e_spd=0.3,
   e_spwd=15
  },
- {
+ { -- COFFEE
   e_cnt=60,
   e_spd=0.3,
   e_spwd=13
  },
- {
-  e_cnt=70,
+ { -- PARKING
+  e_cnt=60,
   e_spd=0.3,
   e_spwd=11,
   e_wsr={{5,10}} --wall spawn range
  },
- {
-  e_cnt=70,
+ { -- ICE CREAM TRUCK
+  e_cnt=50,
   e_spd=0.3,
   e_spwd=10
  },
- {
-  e_cnt=70,
-  e_spd=0.3,
+ { -- PARK
+  e_cnt=50,
+  e_spd=0.4,
   e_spwd=9
  },
- {
-  e_cnt=80,
-  e_spd=0.3,
+ { -- WATER PLANT SIGN
+  e_cnt=50,
+  e_spd=0.4,
   e_spwd=8
  },
- {
-  e_cnt=80,
-  e_spd=0.3,
+ { -- WATER PLANT FENCE
+  e_cnt=50,
+  e_spd=0.4,
   e_spwd=7
  },
- {
-  e_cnt=100,
-  e_spd=0.3,
+ { -- WATER PLANT BUILDING
+  e_cnt=50,
+  e_spd=0.4,
   e_spwd=6
  },
- {
-  e_cnt=110,
+ { -- INSIDE
+  e_cnt=60,
   e_spd=0.4,
   e_spwd=5
  },
- {
-  e_cnt=120,
+ { -- PIPES
+  e_cnt=60,
   e_spd=0.4,
   e_spwd=5
  },
- {
-  e_cnt=150,
-  e_spd=0.4,
+ { -- LEAKING PIPES
+  e_cnt=60,
+  e_spd=0.5,
   e_spwd=4
  },
- {
-  e_cnt=160,
-  e_spd=0.4,
+ { -- CONTAINERS
+  e_cnt=70,
+  e_spd=0.5,
   e_spwd=4
  },
- {
-  e_cnt=170,
-  e_spd=0.4,
-  e_spwd=3,
+ { -- CONTAINERS WITH DOOR
+  e_cnt=90,
+  e_spd=0.5,
+  e_spwd=4,
   e_wsr={{11,12}} --wall spawn range
  },
- {
-  e_cnt=180,
-  e_spd=0.4,
-  e_spwd=3,
+ { -- DOUBLE WALL OPENINGS
+  e_cnt=150,
+  e_spd=0.5,
+  e_spwd=4,
   e_wsr={{1,5},{10,14}} --wall spawn range
  },
- {
+ { -- FINAL STAGE
   e_cnt=300,
-  e_spd=0.4,
-  e_spwd=2,
+  e_spd=0.5,
+  e_spwd=3,
   e_wsr={{0,1},{13,14}} --wall spawn range
  },
- {
+ { -- BOSS
   e_cnt=2,
   e_spd=0.3
  }
