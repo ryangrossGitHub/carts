@@ -180,7 +180,7 @@ end
 -->8
 -- dialog --
 
-end_dialog_delay = 100
+end_dialog_delay = 120
 end_dialog_cnt = 0
 end_dt_cnt = 1
 end_dt = {
