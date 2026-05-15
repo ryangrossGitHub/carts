@@ -49,43 +49,43 @@ function _update()
  end
  
  if p_move then
-	 if btn(0) and p.x>cam_x  then
-	  p.x -= 1
-	  p.f = true 
-	 elseif btn(1) and p.x<cam_x + 
+	 if btn(0) and p1.x>cam_x  then
+	  p1.x -= 1
+	  p1.f = true 
+	 elseif btn(1) and p1.x<cam_x + 
 	  screen_s - 16 then
-	  p.x += 1
-	  p.f = false
+	  p1.x += 1
+	  p1.f = false
 	 end
 	 
-	 if btn(2) and p.y > 
+	 if btn(2) and p1.y > 
 	  flr(stage/9)*screen_s+42 then
-	  p.y -= 1
-	 elseif btn(3) and p.y < 
+	  p1.y -= 1
+	 elseif btn(3) and p1.y < 
 	  flr(stage/9)*screen_s+110 then
-	  p.y += 1
+	  p1.y += 1
 	 end
 	 
 	 if btn(❎) or btn(🅾️) then
-	  if not trigger_p then
-	 	 if p.wpn == 0 then
+	  if not trigger_p1 then
+	 	 if p1.wpn == 0 then
 	 	  if pstol.cnt == 0 then
 	 	   pstol.cnt = pstol.delay
 	 	  	sfx(0)
-	 	  	enemy_coll_detect(p)
+	 	  	enemy_coll_detect(p1)
 	 	  end
-	 	 elseif p.wpn == 1 then
+	 	 elseif p1.wpn == 1 then
 	 	  if sgun.cnt == 0 then
 	 	   sgun.cnt = sgun.delay
 	 	   sfx(1)
-	 	   enemy_coll_detect(p)
+	 	   enemy_coll_detect(p1)
 	 	  end
 	 	 end
 	  end
 	  
-	  trigger_p = true
+	  trigger_p1 = true
 	 else
-	  trigger_p = false
+	  trigger_p1 = false
 	 end
 	end
  
@@ -99,7 +99,7 @@ function _update()
  
  update_bot()
  update_enemies()
- update_player_anims(p)
+ update_player_anims(p1)
  update_player_anims(bot)
 end
 
@@ -116,8 +116,8 @@ function _draw()
  draw_enemies()
  draw_particles(particles)
  
- spr(get_pspr(p),p.x,p.y,
-  2,2,p.f,false)
+ spr(get_pspr(p1),p1.x,p1.y,
+  2,2,p1.f,false)
  spr(get_pspr(bot),bot.x,bot.y,
   2,2,bot.f,false)
  say(58,12,"DONUTS ♥", 0, false)
@@ -186,24 +186,24 @@ end_dialog_delay = 120
 end_dialog_cnt = 0
 end_dt_cnt = 1
 end_dt = {
-	{"p2", "HEY! PUT'EM UP"},
+	{"c", "HEY! PUT'EM UP"},
  {"e", "I'M SORRY, MY WIFE AND DAUGHTER WERE TAKEN"},	
  {"e", "I HAD NO WAY TO PAY THEIR RANSOM"},
  {"e", "I.. I HAVE TO DO THIS TO BUY THEIR FREEDOM"},
- {"p2", "I HAVE A WIFE AND DAUGHTER TOO"},
- {"p2", "I WOULD DO ANYTHING FOR THEM"},
- {"p1", "AND I HAVE A SON"},
- {"p1", "HE SLEEPS UNDER HIS BED BECAUSE OF THE ZOMBIES"},
+ {"c", "I HAVE A WIFE AND DAUGHTER TOO"},
+ {"c", "I WOULD DO ANYTHING FOR THEM"},
+ {"j", "AND I HAVE A SON"},
+ {"j", "HE SLEEPS UNDER HIS BED BECAUSE OF THE ZOMBIES"},
  {"e", "AGAIN I'M SORRY.. AND I'M NOT THE ONLY ONE.."},
- {"e", "THERE ARE OTHERS ACCROSS THE COUNTRY"},
- {"p2", "WHAT IF THERE WAS ANOTHER WAY"},
- {"p2", "WHAT IF WE COULD BRING YOUR WIFE AND DAUGHER HERE"},
- {"p2", "HERE THEY WOULD BE SAFE, WE COULD PROTECT THEM"},
- {"p1", "YOU WON'T BE FORGIVEN AND YOU WILL DO TIME"},
- {"p1", "BUT YOUR FAMILY WILL BE SAFE AND THEY CAN VISIT YOU"},
- {"p2", "IN RETURN YOU HELP US STOP THE OTHERS"},
+ {"e", "THERE ARE OTHERS ACROSS THE COUNTRY"},
+ {"c", "WHAT IF THERE WAS ANOTHER WAY"},
+ {"c", "WHAT IF WE COULD BRING YOUR WIFE AND DAUGHTER HERE"},
+ {"c", "HERE THEY WOULD BE SAFE, WE COULD PROTECT THEM"},
+ {"j", "YOU WON'T BE FORGIVEN AND YOU WILL DO TIME"},
+ {"j", "BUT YOUR FAMILY WILL BE SAFE AND THEY CAN VISIT YOU"},
+ {"c", "IN RETURN YOU HELP US STOP THE OTHERS"},
  {"e", "DEAL, BUT I WANT TO SEE MY WIFE AND DAUGHTER"},
- {"p1", "OKAY, COME WITH US, LET'S TAKE THESE GUYS DOWN"},
+ {"j", "OKAY, COME WITH US, LET'S TAKE THESE GUYS DOWN"},
  {"f", "TO BE CONTINUED"},
  {"f", "TO BE CONTINUED"},
  {"f", "TO BE CONTINUED"},
@@ -276,12 +276,12 @@ function ending_dialog()
 	 end_dialog_delay then
 	 
 	 if end_dt[end_dt_cnt][1]
-	  == "p1" then
-	 	say(p1.x,p1.y, 
+	  == "j" then
+	 	say(j.x,j.y, 
 	 		end_dt[end_dt_cnt][2], 1)
 	 elseif end_dt[end_dt_cnt][1]
-	  == "p2" then
-	  say(p2.x,p2.y, 
+	  == "c" then
+	  say(c.x,c.y, 
 	 		end_dt[end_dt_cnt][2], 1)
 	 elseif end_dt[end_dt_cnt][1]
 	  == "e" then
@@ -300,31 +300,31 @@ end
 
 function draw_trans_dialog()
  if stage == 2 then --DONUT
-  say(p2.x,p2.y, "DARN, OUT OF DONUTS. MUST BE THE MORNING RUSH", 1)
+  say(c.x,c.y, "DARN, OUT OF DONUTS. MUST BE THE MORNING RUSH", 1)
  elseif stage == 3 then --COFFEE
-  say(p1.x,p1.y, "THE VIRUS SPREADS THROUGH WATER, GOOD THING I ONLY DRINK COFFEE", 1)
+  say(j.x,j.y, "THE VIRUS SPREADS THROUGH WATER, GOOD THING I ONLY DRINK COFFEE", 1)
  elseif stage == 4 then --PARKING
-  say(p2.x,p2.y, "I DON'T GET PAID ENOUGH FOR THIS", 1)
+  say(c.x,c.y, "I DON'T GET PAID ENOUGH FOR THIS", 1)
  elseif stage == 5 then --ICE CREAM TRUCK
-  say(p1.x,p1.y, "IF THEY HAD MINT CHOCOLATE CHIP I WOULD HAVE BOUGHT ONE", 1)
+  say(j.x,j.y, "IF THEY HAD MINT CHOCOLATE CHIP I WOULD HAVE BOUGHT ONE", 1)
  elseif stage == 6 then --PARK
-  say(p2.x,p2.y, "IF WE CAN FIND THE SOURCE OF THE VIRUS HERE WE CAN STOP THIS", 1)
+  say(c.x,c.y, "IF WE CAN FIND THE SOURCE OF THE VIRUS HERE WE CAN STOP THIS", 1)
  elseif stage == 7 then --SIGN
-  say(p1.x,p1.y, "IT'S ONLY BEEN A WEEK, BUT I COULD GET USED TO ZOMBIE HUNTING.", 1)
+  say(j.x,j.y, "IT'S ONLY BEEN A WEEK, BUT I COULD GET USED TO ZOMBIE HUNTING.", 1)
  elseif stage == 8 then --FENCE
-  say(p2.x,p2.y, "WE MADE IT, LET'S GET INSIDE AND TURN OFF THE WATER", 1)
+  say(c.x,c.y, "WE MADE IT, LET'S GET INSIDE AND TURN OFF THE WATER", 1)
  elseif stage == 10 then --PLANT ENTRANCE
-  say(p1.x,p1.y, "WORST PART ABOUT THE APOCOLYPSE NO WINE, NO PIZZA, NO DONUTS", 1)
+  say(j.x,j.y, "WORST PART ABOUT THE APOCALYPSE NO WINE, NO PIZZA, NO DONUTS", 1)
  elseif stage == 11 then --PIPE1
-  say(p2.x,p2.y, "AFTER THIS, FIRST ROUND IS ON ME, IF WE CAN FIND AN OPEN BAR..", 1)
+  say(c.x,c.y, "AFTER THIS, FIRST ROUND IS ON ME, IF WE CAN FIND AN OPEN BAR..", 1)
  elseif stage == 12 then --PIPE2
-  say(p1.x,p1.y, "I'M DEFINATELY GETTING MY STEPS IN", 1)
+  say(j.x,j.y, "I'M DEFINITELY GETTING MY STEPS IN", 1)
  elseif stage == 13 then --VAT1
-  say(p2.x,p2.y, "I NEED TO MOVE MY FAMILY OUT TO THE COUNTRY SIDE", 1)
+  say(c.x,c.y, "I NEED TO MOVE MY FAMILY OUT TO THE COUNTRY SIDE", 1)
  elseif stage == 14 then --VAT2
-  say(p1.x,p1.y, "IF YOU ALL LEAVE THE CITY, JAKE AND I ARE COMING WITH YOU", 1)
+  say(j.x,j.y, "IF YOU ALL LEAVE THE CITY, JAKE AND I ARE COMING WITH YOU", 1)
  elseif stage == 15 then --VAT2
-  say(p2.x,p2.y, "WHATEVER HAPPENS HERE, I COULDN'T ASK FOR A BETTER PARTNER", 1)
+  say(c.x,c.y, "WHATEVER HAPPENS HERE, I COULDN'T ASK FOR A BETTER PARTNER", 1)
  end
 end
 -->8
@@ -398,19 +398,19 @@ function update_enemies()
 		  end
 		 end
 	 else
-	  if p.x < e.x - e.spd then
+	  if p1.x < e.x - e.spd then
 	   e.x -= e.spd
 	   e.f = false
-	  elseif p.x > e.x + e.spd then
+	  elseif p1.x > e.x + e.spd then
 	   e.x += e.spd
 	   e.f = true
 	  end
 	  
 	  -- walk to middle before down
-	  if abs(p.x-e.x) < 2 then
-		  if p.y < e.y - e.spd then
+	  if abs(p1.x-e.x) < 2 then
+		  if p1.y < e.y - e.spd then
 		   e.y -= e.spd
-		  elseif p.y > e.y + e.spd then
+		  elseif p1.y > e.y + e.spd then
 		   e.y += e.spd
 		  end
 	  end
@@ -484,12 +484,12 @@ end
 -- players --
 p_move = false
 
-init_p1_x = 47
-init_p2_x = 65
-init_p_y = 80
+init_j_x = 47
+init_c_x = 65
+init_y = 80
 
-p1 = {
- name="p1",
+j = {
+ name="j",
  s={34,32}, -- spr in animation
  si=1, -- animation frame index
  sm=40, -- spr melee
@@ -497,16 +497,16 @@ p1 = {
  mfc=0, -- melee frame count
  mfd=5, -- melee frame delay
  f=true, -- flip sprite?
- x=init_p1_x, -- position
- y=init_p_y, -- position
- lafx=init_p1_x, -- last anima frame x
- lafy=init_p_y, -- last anima frame y
+ x=init_j_x, -- position
+ y=init_y, -- position
+ lafx=init_j_x, -- last anima frame x
+ lafy=init_y, -- last anima frame y
  afd=5, -- anima frame delay
  wpn=1 -- weapon: 0 pistol, 1 shotgun
 }
 
-p2 = {
- name="p2",
+c = {
+ name="c",
  s={2,0}, -- spr in animation
  si=1, -- animation frame index
  sm=42, -- spr melee
@@ -514,10 +514,10 @@ p2 = {
  mfc=0, -- melee frame count
  mfd=5, -- melee frame delay
  f=false, -- flip sprite?
- x=init_p2_x, -- position
- y=init_p_y, -- position
- lafx=init_p2_x, -- last anima frame x
- lafy=init_p_y, -- last anima frame y
+ x=init_c_x, -- position
+ y=init_y, -- position
+ lafx=init_c_x, -- last anima frame x
+ lafy=init_y, -- last anima frame y
  afd=5, -- anima frame delay
  wpn=0 -- weapon: 0 pistol, 1 shotgun
 }
@@ -527,10 +527,10 @@ boss={
  y=216
 }
 
-p=p1
-bot=p2
+p1=j
+bot=c
 
-trigger_p = false
+trigger_p1 = false
 
 sgun = { -- shotgun
  delay=30,
@@ -686,9 +686,9 @@ function get_pspr(p)
  	ps = p.sm -- melee spr
  	p.mfc += 1
  	
- 	if p.name == "p1" then
+ 	if p.name == "j" then
  	 say(p.x,p.y, "YEEEEEET!")
- 	elseif p.name == "p2" then
+ 	elseif p.name == "c" then
  	 say(p.x,p.y, "GET SOME!")
  	end
  	
@@ -809,10 +809,10 @@ function load_stage(n)
   
   -- 8 to 9 is transition inside
   if n == 9 then
-   p1.y = screen_s + init_p_y
-   p2.y = screen_s + init_p_y-16
-   p1.x = 16
-   p2.x = 16
+   j.y = screen_s + init_y
+   c.y = screen_s + init_y-16
+   j.x = 16
+   c.x = 16
    cam_y = screen_s
    cam_x = 0
    e_spawn = true
@@ -821,8 +821,8 @@ function load_stage(n)
    stage_trans = true
    e_spawn = false
    p_move = false
-   p1.f = false
-   p2.f = false
+   j.f = false
+   c.f = false
   end
  end
 end
@@ -830,8 +830,8 @@ end
 function update_stage_trans()
  if stfc < stft then
   stfc += 1
-  p1.x += 1
-  p2.x += 1
+  j.x += 1
+  c.x += 1
   cam_x += 1
  else
   stage_trans = false
@@ -849,20 +849,20 @@ function load_start()
  e_spawn = false
  cam_x = 0
  cam_y = 0
- p1.y = init_p_y
- p2.y = init_p_y
- p1.x = init_p1_x
- p2.x = init_p2_x
+ j.y = init_y
+ c.y = init_y
+ j.x = init_j_x
+ c.x = init_c_x
 end
 
 function update_start()
  if btnp(0) or btnp(1) then
-  if p.name == "p1" then
-   p=p2
-   bot=p1
+  if p1.name == "j" then
+   p1=c
+   bot=j
   else
-   p=p1
-   bot=p2
+   p1=j
+   bot=c
   end
  end
  
@@ -872,10 +872,10 @@ function update_start()
 end
 
 function draw_start()
- rect(p.x-2,
-  p.y-2,
-  p.x+18,
-  p.y+18,
+ rect(p1.x-2,
+  p1.y-2,
+  p1.x+18,
+  p1.y+18,
   1)
   
   say(58,110,
@@ -1085,8 +1085,8 @@ __map__
 464946714642424242424246494671464649467146424242424242467146494646714649464242424242424649467146414141414141414141414141414141414141444444444441414141414141414141414141414141414141414141414141414141414141414141414141414141414141464d4d4d4d4d4d4d4d4d4d4d4d4d
 464a4670464242424242424670464a464670467046424242424242464a467046464a464a46424242424242464a467046414142424242424141414141414141414141444444444441414141414141414141414141414141414141414141414141414141414141414141414141414141414141464d4d4d4d4d4d4d4d4d4d4d4d4d
 464646464646464646464646464646464646464646464646464646464646464646464646464646464646464646464646417575757575757575414141414141414141444444444441414141414141414141414142424242424241414658585858585858585858585858585858585858585858464d4d4d4d4d4d4d4d4d4d4d4d4d
-46714649465253525352534c4946714646727379464442444244424c47477a464646464646534253425342464646464641754b4b4b4b4b7543414141414141414141414150414141414141414141414141414142424242424241414658585858585858585858585858585858585858585858464d4d4d4d4d4d4d4d4d4d4d4d4d
-464a4670464b4b4e4f4b4b4d4a46704646545454464b4e4f4e4e4b4d545454464646464646434343434343467f46464641754646464646754341414141414141414141415041414141414141414141414141414242424242424141465858585858595959595959585959595959595858585846424242424672494747466e4d4d
+46714649465253525352534c4946714646727379464442444244424c47477a464646464646534253425342464646464641754b4b4b4b4b7547414141414141414141414150414141414141414141414141414142424242424241414658585858585858585858585858585858585858585858464d4d4d4d4d4d4d4d4d4d4d4d4d
+464a4670464b4b4e4f4b4b4d4a46704646545454464b4e4f4e4e4b4d545454464646464646434343434343467f4646464175467f467f46757a41414141414141414141415041414141414141414141414141414242424242424141465858585858595959595959585959595959595858585846424242424672494747466e4d4d
 4646464646465179495146464646464646505050467f474979476c46505050464646464646434343434343466f46464641535353535353535353414b4141414141414141504150505050414b414141414141414747474747474141465858585858466e465a5b5b5c5b5b5b5a5b5b5c5c5c5c4642424242464749777a464d4d4d
 464646464646524749524646464646464646466c6c6f774947476f6c466c46464646466c46434343434343466146464644454543454545434545444644444444444444445044555656554446444444444444444457444457444444464444444444444444444444444444444444444444444446464646464647494343464d4d4d
 407c407c407b74535340407b40407c40747c7c7c406a7c407c407b747b407c4040406a40404040404040404040407c40404076407b404040407b40767440764040404076406a40404040407b40744040404040404040404040404040404040404040404040404040404040404040404040404040404040407c407c7c7c404040
