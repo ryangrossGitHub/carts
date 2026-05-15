@@ -97,10 +97,10 @@ function _update()
   pstol.cnt -= 1
  end
  
- update_bot()
+ update_p2()
  update_enemies()
  update_player_anims(p1)
- update_player_anims(bot)
+ update_player_anims(p2)
 end
 
 function _draw()
@@ -116,10 +116,6 @@ function _draw()
  draw_enemies()
  draw_particles(particles)
  
- spr(get_pspr(p1),p1.x,p1.y,
-  2,2,p1.f,false)
- spr(get_pspr(bot),bot.x,bot.y,
-  2,2,bot.f,false)
  say(58,12,"DONUTS ♥", 0, false)
  say(screen_s + 58,
   12,"COFFEE ●", 0, false)
@@ -133,6 +129,13 @@ function _draw()
  say(screen_s*7 + 32,
   49,"danger! DO NOT ENTER",
    0, false)
+   
+ spr(get_pspr(p1),p1.x,p1.y,
+  2,2,p1.f,false)
+ print("p1",p1.x-3,p1.y-6,8)
+ spr(get_pspr(p2),p2.x,p2.y,
+  2,2,p2.f,false)
+ print("p2",p2.x-3,p2.y-6,12)
  
  if stage == 0 then
   draw_start()
@@ -484,8 +487,8 @@ end
 -- players --
 p_move = false
 
-init_j_x = 47
-init_c_x = 65
+init_j_x = 45
+init_c_x = 67
 init_y = 80
 
 j = {
@@ -528,7 +531,7 @@ boss={
 }
 
 p1=j
-bot=c
+p2=c
 
 trigger_p1 = false
 
@@ -542,32 +545,32 @@ pstol = { -- pistol
  cnt=0
 }
 
-function update_bot()
+function update_p2()
  local c,y = closest_enemy()
  if c then
 	 if c < 0 then
-	  bot.f = true
+	  p2.f = true
 	  
-	  if bot.x > cam_x+32 then
-	   bot.x -= 1
+	  if p2.x > cam_x+32 then
+	   p2.x -= 1
 	  end
 	 else
-	  bot.f = false
+	  p2.f = false
 	  	  
-	  if bot.x < cam_x+screen_s-32 then
-	   bot.x += 1
+	  if p2.x < cam_x+screen_s-32 then
+	   p2.x += 1
 	  end
 	 end
-	 bot_fire()
+	 p2_fire()
 	end
 	
 	if y < 0 then
-	 bot.y -= 1
+	 p2.y -= 1
 	elseif y > 0 then
-	 bot.y += 1
+	 p2.y += 1
 	end
 	
-	enemy_collision(bot)
+	enemy_collision(p2)
 end
 
 function closest_enemy()
@@ -582,7 +585,7 @@ function closest_enemy()
  
  local hbox = 4 -- hit box
  
- if bot.wpn == 1 then
+ if p2.wpn == 1 then
   hbox = 12
  end
  
@@ -598,17 +601,17 @@ function closest_enemy()
    -- enemies above or below
    -- to dictate y movement
    
-   if (e.y > bot.y-hbox 
-    and e.y < bot.y+hbox) 
+   if (e.y > p2.y-hbox 
+    and e.y < p2.y+hbox) 
     then
       
-	   local dir = e.x-bot.x
+	   local dir = e.x-p2.x
 	   local dif = abs(dir)
 	   if dif < closest then
 	    closest = dif
 	    c_xdir = dir
 	   end
-	  elseif e.y < bot.y then
+	  elseif e.y < p2.y then
 	   e_ydir -= 1
 	  else
 	   e_ydir += 1
@@ -624,18 +627,18 @@ function closest_enemy()
  end
 end
 
-function bot_fire()
- if bot.wpn == 0 then
+function p2_fire()
+ if p2.wpn == 0 then
   if pstol.cnt == 0 then
    pstol.cnt = pstol.delay
   	sfx(0)
-  	enemy_coll_detect(bot)
+  	enemy_coll_detect(p2)
   end
- elseif bot.wpn == 1 then
+ elseif p2.wpn == 1 then
   if sgun.cnt == 0 then
    sgun.cnt = sgun.delay
    sfx(1)
-   enemy_coll_detect(bot)
+   enemy_coll_detect(p2)
   end
  end
 end
@@ -859,10 +862,10 @@ function update_start()
  if btnp(0) or btnp(1) then
   if p1.name == "j" then
    p1=c
-   bot=j
+   p2=j
   else
    p1=j
-   bot=c
+   p2=c
   end
  end
  
@@ -872,11 +875,17 @@ function update_start()
 end
 
 function draw_start()
- rect(p1.x-2,
-  p1.y-2,
-  p1.x+18,
-  p1.y+18,
-  1)
+ rect(p1.x-3,
+  p1.y-1,
+  p1.x+16,
+  p1.y+16,
+  8)
+  
+ rect(p2.x-3,
+  p2.y-1,
+  p2.x+16,
+  p2.y+16,
+  12)
   
   say(58,110,
    "⬅️   JENN CHAD    ➡️",
@@ -908,8 +917,8 @@ ddd111ddddddddddddd111dddddddddd666666ffff666666666666ffff666666ddddd111d5dddddd
 ddd1111dddddddddddd1111ddddddddd666666ffff666666666666ffff666666ddddd11115ddddddddddd4440d044ddd0000000000000000dddd3ddddddddddd
 dddaf0dddddddddddddaf0dddddddddd666666f0f666666666c00cf0f6666666dddddaf0d5ddddddddddd4444dd44ddd0000000000000000dddddddddddddddd
 ddafffddddddddddddafffdddddddddd66666600f666666666c0fc00f6666666ddddafffd54fddddddddd444ddd44ddd0000000000000000dddddddd3ddddddd
-dddffddddddddddddddffddddddddddd66666666f6666666660ecf66f6666666dddddffdd54fdd3ddddddccccc44dd3d0000000000000000ddddddddd3ddd3dd
-dd0ccc0d55555555dd0ccc0d55555555666666655666666666cee76556666666dddd0ccc054ddddddddddccccc44dddd0000000000000000dddddddddddddddd
+dddffddddddddddddddffddddddddddd66666666f6666666660ecf66f6666666dddddffdd54fdd3ddddddccccc444d3d0000000000000000ddddddddd3ddd3dd
+dd0ccc0d55555555dd0ccc0d55555555666666655666666666cee76556666666dddd0ccc054ddddddddddccccc444ddd0000000000000000dddddddddddddddd
 dd00cc054444dddddd00cc054444dddd666666655666666666c2c76556666666dddd00cc054dddd3dddddccccdddddd30000000000000000d3ddd3dddddddddd
 dd0ccccfddffdddddd0ccccfddffdddd66600665566666666632336556666666dddd0cccccfdd3dddddddccccdddd3dd0000000000000000d3dddddddddddddd
 dd0ccccfdddddddddd0ccccfdddddddd6666f555566666666666f55556666666dddd0cccccfdddd0dddddccccdddddd00000000000000000ddddddddddddd5d3
